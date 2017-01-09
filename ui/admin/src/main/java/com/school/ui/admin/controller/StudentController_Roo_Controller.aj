@@ -24,7 +24,7 @@ import com.school.base.domain.StudentClassHistory;
 import com.school.base.domain.StudentExamination;
 import com.school.base.domain.StudentGroup;
 import com.school.base.domain.StudentLogin;
-import com.school.ui.admin.controller.StudentController;
+import com.school.ui.admin.controller.SampleController;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -42,7 +42,7 @@ import org.springframework.web.util.WebUtils;
 privileged aspect StudentController_Roo_Controller {
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String StudentController.create(@Valid Student student, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String SampleController.create(@Valid Student student, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, student);
             return "students/create";
@@ -53,13 +53,13 @@ privileged aspect StudentController_Roo_Controller {
     }
     
     @RequestMapping(params = "form", produces = "text/html")
-    public String StudentController.createForm(Model uiModel) {
+    public String SampleController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Student());
         return "students/create";
     }
     
     @RequestMapping(value = "/{studentId}", produces = "text/html")
-    public String StudentController.show(@PathVariable("studentId") Integer studentId, Model uiModel) {
+    public String SampleController.show(@PathVariable("studentId") Integer studentId, Model uiModel) {
         addDateTimeFormatPatterns(uiModel);
         uiModel.addAttribute("student", Student.findStudent(studentId));
         uiModel.addAttribute("itemId", studentId);
@@ -67,7 +67,7 @@ privileged aspect StudentController_Roo_Controller {
     }
     
     @RequestMapping(produces = "text/html")
-    public String StudentController.list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String SampleController.list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
@@ -82,7 +82,7 @@ privileged aspect StudentController_Roo_Controller {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String StudentController.update(@Valid Student student, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String SampleController.update(@Valid Student student, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, student);
             return "students/update";
@@ -93,13 +93,13 @@ privileged aspect StudentController_Roo_Controller {
     }
     
     @RequestMapping(value = "/{studentId}", params = "form", produces = "text/html")
-    public String StudentController.updateForm(@PathVariable("studentId") Integer studentId, Model uiModel) {
+    public String SampleController.updateForm(@PathVariable("studentId") Integer studentId, Model uiModel) {
         populateEditForm(uiModel, Student.findStudent(studentId));
         return "students/update";
     }
     
     @RequestMapping(value = "/{studentId}", method = RequestMethod.DELETE, produces = "text/html")
-    public String StudentController.delete(@PathVariable("studentId") Integer studentId, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String SampleController.delete(@PathVariable("studentId") Integer studentId, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
         Student student = Student.findStudent(studentId);
         student.remove();
         uiModel.asMap().clear();
@@ -108,14 +108,14 @@ privileged aspect StudentController_Roo_Controller {
         return "redirect:/students";
     }
     
-    void StudentController.addDateTimeFormatPatterns(Model uiModel) {
+    void SampleController.addDateTimeFormatPatterns(Model uiModel) {
         uiModel.addAttribute("student_dob_date_format", DateTimeFormat.patternForStyle("M-", LocaleContextHolder.getLocale()));
         uiModel.addAttribute("student_admissiondate_date_format", DateTimeFormat.patternForStyle("M-", LocaleContextHolder.getLocale()));
         uiModel.addAttribute("student_auditcreateddttime_date_format", DateTimeFormat.patternForStyle("MM", LocaleContextHolder.getLocale()));
         uiModel.addAttribute("student_auditmodifieddttime_date_format", DateTimeFormat.patternForStyle("MM", LocaleContextHolder.getLocale()));
     }
     
-    void StudentController.populateEditForm(Model uiModel, Student student) {
+    void SampleController.populateEditForm(Model uiModel, Student student) {
         uiModel.addAttribute("student", student);
         addDateTimeFormatPatterns(uiModel);
         uiModel.addAttribute("bloodgroups", BloodGroup.findAllBloodGroups());
@@ -140,7 +140,7 @@ privileged aspect StudentController_Roo_Controller {
         uiModel.addAttribute("studentlogins", StudentLogin.findAllStudentLogins());
     }
     
-    String StudentController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+    String SampleController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
         String enc = httpServletRequest.getCharacterEncoding();
         if (enc == null) {
             enc = WebUtils.DEFAULT_CHARACTER_ENCODING;

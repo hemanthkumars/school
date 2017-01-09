@@ -42,16 +42,7 @@ privileged aspect SchoolHoliday_Roo_DbManaged {
     @DateTimeFormat(style = "M-")
     private Date SchoolHoliday.holidayDate;
     
-    @Column(name = "AUDIT_CREATED_DT_TIME")
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar SchoolHoliday.auditCreatedDtTime;
     
-    @Column(name = "AUDIT_MODIFIED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar SchoolHoliday.auditModifiedDtTime;
     
     public Staff SchoolHoliday.getAuditUserId() {
         return auditUserId;
@@ -93,20 +84,7 @@ privileged aspect SchoolHoliday_Roo_DbManaged {
         this.holidayDate = holidayDate;
     }
     
-    public Calendar SchoolHoliday.getAuditCreatedDtTime() {
-        return auditCreatedDtTime;
-    }
+
     
-    public void SchoolHoliday.setAuditCreatedDtTime(Calendar auditCreatedDtTime) {
-        this.auditCreatedDtTime = auditCreatedDtTime;
-    }
-    
-    public Calendar SchoolHoliday.getAuditModifiedDtTime() {
-        return auditModifiedDtTime;
-    }
-    
-    public void SchoolHoliday.setAuditModifiedDtTime(Calendar auditModifiedDtTime) {
-        this.auditModifiedDtTime = auditModifiedDtTime;
-    }
     
 }

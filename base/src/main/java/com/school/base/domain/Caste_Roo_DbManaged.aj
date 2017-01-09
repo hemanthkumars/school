@@ -23,9 +23,6 @@ privileged aspect Caste_Roo_DbManaged {
     @OneToMany(fetch=FetchType.LAZY,mappedBy = "casteId")
     private Set<Student> Caste.students;
     
-    @ManyToOne
-    @JoinColumn(name = "RELIGION_ID", referencedColumnName = "RELIGION_ID", nullable = false)
-    private Religion Caste.religionId;
     
     @Column(name = "CASTE_NAME", length = 200)
     @NotNull
@@ -47,13 +44,6 @@ privileged aspect Caste_Roo_DbManaged {
         this.students = students;
     }
     
-    public Religion Caste.getReligionId() {
-        return religionId;
-    }
-    
-    public void Caste.setReligionId(Religion religionId) {
-        this.religionId = religionId;
-    }
     
     public String Caste.getCasteName() {
         return casteName;

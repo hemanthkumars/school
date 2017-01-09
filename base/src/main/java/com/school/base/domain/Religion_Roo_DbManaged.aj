@@ -15,8 +15,7 @@ import javax.validation.constraints.NotNull;
 
 privileged aspect Religion_Roo_DbManaged {
     
-    @OneToMany(fetch=FetchType.LAZY,mappedBy = "religionId")
-    private Set<Caste> Religion.castes;
+  
     
     @OneToMany(fetch=FetchType.LAZY,mappedBy = "religionId")
     private Set<Staff> Religion.staffs;
@@ -27,14 +26,6 @@ privileged aspect Religion_Roo_DbManaged {
     @Column(name = "RELIGION", length = 255)
     @NotNull
     private String Religion.religion;
-    
-    public Set<Caste> Religion.getCastes() {
-        return castes;
-    }
-    
-    public void Religion.setCastes(Set<Caste> castes) {
-        this.castes = castes;
-    }
     
     public Set<Staff> Religion.getStaffs() {
         return staffs;

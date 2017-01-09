@@ -50,10 +50,7 @@ privileged aspect SchoolFee_Roo_DbManaged {
     @Column(name = "BALANCE")
     private Integer SchoolFee.balance;
     
-    @Column(name = "AUDIT_CREATED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar SchoolFee.auditCreatedDtTime;
+    
     
     public Set<ReceiptSchoolFee> SchoolFee.getReceiptSchoolFees() {
         return receiptSchoolFees;
@@ -119,12 +116,5 @@ privileged aspect SchoolFee_Roo_DbManaged {
         this.balance = balance;
     }
     
-    public Calendar SchoolFee.getAuditCreatedDtTime() {
-        return auditCreatedDtTime;
-    }
-    
-    public void SchoolFee.setAuditCreatedDtTime(Calendar auditCreatedDtTime) {
-        this.auditCreatedDtTime = auditCreatedDtTime;
-    }
     
 }

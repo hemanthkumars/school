@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/students")
 @Controller
 @RooWebScaffold(path = "students", formBackingObject = Student.class)
-public class StudentController {
+public class SampleController {
 }

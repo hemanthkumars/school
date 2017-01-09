@@ -184,15 +184,7 @@ privileged aspect Student_Roo_DbManaged {
     @Column(name = "PASSWORD", length = 500)
     private String Student.password;
     
-    @Column(name = "AUDIT_CREATED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar Student.auditCreatedDtTime;
     
-    @Column(name = "AUDIT_MODIFIED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar Student.auditModifiedDtTime;
     
     public Set<SchoolFee> Student.getSchoolFees() {
         return schoolFees;
@@ -538,20 +530,6 @@ privileged aspect Student_Roo_DbManaged {
         this.password = password;
     }
     
-    public Calendar Student.getAuditCreatedDtTime() {
-        return auditCreatedDtTime;
-    }
-    
-    public void Student.setAuditCreatedDtTime(Calendar auditCreatedDtTime) {
-        this.auditCreatedDtTime = auditCreatedDtTime;
-    }
-    
-    public Calendar Student.getAuditModifiedDtTime() {
-        return auditModifiedDtTime;
-    }
-    
-    public void Student.setAuditModifiedDtTime(Calendar auditModifiedDtTime) {
-        this.auditModifiedDtTime = auditModifiedDtTime;
-    }
+  
     
 }
