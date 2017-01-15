@@ -14,11 +14,11 @@ import javax.validation.constraints.NotNull;
 privileged aspect ReceiptSchoolFee_Roo_DbManaged {
     
     @ManyToOne
-    @JoinColumn(name = "SCHOOL_FEE_ID", referencedColumnName = "SCHOOL_FEE_ID", nullable = false)
+    @JoinColumn(name = "SCHOOL_FEE_ID", referencedColumnName = "SCHOOL_FEE_ID")
     private SchoolFee ReceiptSchoolFee.schoolFeeId;
     
     @ManyToOne
-    @JoinColumn(name = "SCHOOL_FEE_RECEIPT_ID", referencedColumnName = "SCHOOL_FEE_RECEIPT_ID", nullable = false)
+    @JoinColumn(name = "SCHOOL_FEE_RECEIPT_ID", referencedColumnName = "SCHOOL_FEE_RECEIPT_ID")
     private SchoolFeeReceipt ReceiptSchoolFee.schoolFeeReceiptId;
     
     @Column(name = "PAID_AMOUNT")

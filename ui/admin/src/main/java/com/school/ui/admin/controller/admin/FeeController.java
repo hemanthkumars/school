@@ -1,7 +1,11 @@
 package com.school.ui.admin.controller.admin;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,16 +18,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.school.base.domain.PaymentType;
 import com.school.base.domain.ReceiptSchoolFee;
 import com.school.base.domain.SchoolAcademic;
 import com.school.base.domain.SchoolFee;
+import com.school.base.domain.SchoolFeeReceipt;
 import com.school.base.domain.SchoolFeeType;
 import com.school.base.domain.Student;
+import com.school.ui.admin.util.ReceiptTO;
 import com.school.ui.admin.util.SessionManager;
+
+import flexjson.JSONSerializer;
 
 @RequestMapping("/admin/fee")
 @Controller
@@ -221,7 +231,7 @@ public class FeeController {
  				
  				schoolFee.setPaidAmount(0);
  				schoolFee.setSchoolAcademicYearId(schoolAcademics.get(0));
- 				SchoolFeeType schoolFeeType= new SchoolFeeType();
+ 				SchoolFeeType schoolFeeType= SchoolFeeType.findSchoolFeeType(schoolFeeTypeId);
  				schoolFeeType.setSchoolFeeTypeId(schoolFeeTypeId);
  				schoolFee.setSchoolFeeTypeId(schoolFeeType);
  				Student student= new Student();
@@ -233,6 +243,10 @@ public class FeeController {
  				}else{
  					schoolFee.setBalance(feeAmount);
  					schoolFee.setTotalAmount(feeAmount);
+ 				}
+ 				if(schoolFeeType.getIsConcessionType()==1){
+ 					schoolFee.setBalance(-feeAmount);
+ 					schoolFee.setTotalAmount(-feeAmount);
  				}
  				schoolFee.persist();
  			 }             
@@ -278,5 +292,246 @@ public class FeeController {
 	 		    return output.toString();
 		  }
 	 }
+	 
+	 @RequestMapping(value = "/payFees", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 @Transactional
+	 public String payFees(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+	     JSONObject output= new JSONObject();
+	     JSONArray jsonArray=input.getJSONArray("schoolFeeArray");
+	//     try{
+	    	 
+	     Integer receiptTotalAmt=0;
+	     SchoolFeeReceipt schoolFeeReceipt=new SchoolFeeReceipt();
+		 schoolFeeReceipt.setAuditCreatedDtTime(new Date(System.currentTimeMillis()));
+		 schoolFeeReceipt.setAuditUserId(SessionManager.getUserContext(request).getStaff());
+		 PaymentType paymentTypeId= new PaymentType();
+		 paymentTypeId.setPaymentTypeId(input.getInt("paymentTypeId"));
+		 schoolFeeReceipt.setPaymentTypeId(paymentTypeId);
+		 schoolFeeReceipt.setReceiptTotalAmount(receiptTotalAmt);
+		 schoolFeeReceipt.setSchoolId(SessionManager.getUserContext(request).getStaff().getSchoolId());
+		 schoolFeeReceipt.setSchoolReceiptNo(0);
+		
+	     for (Object object : jsonArray) {
+			JSONObject jsonObject=(JSONObject) object;
+			 Long schoolFeeId= jsonObject.getLong("schoolFeeId");
+			 String amt=(String) jsonObject.get("schoolFeePayingAmt");
+			 if(!amt.equals("")){
+				 List<SchoolFee> schoolFees=SchoolFee.findSchoolFee(schoolFeeId, SessionManager.getUserContext(request).getSchoolId());
+				 Integer amt2=Integer.parseInt(amt);
+				 receiptTotalAmt+=amt2;
+				 if(schoolFees.isEmpty()){
+					 output.put("error", "true");
+			 		 output.put("message", "Some Error Ocurred");
+			 		  return output.toString(); 
+				 }
+				 SchoolFee schoolFee=schoolFees.get(0); 
+				
+				
+				 if(schoolFee.getBalance()==0){
+					 output.put("error", "true");
+			 		 output.put("message", schoolFee.getSchoolFeeTypeId().getFeeType()+"  "+schoolFee.getTotalAmount()+" Rs is already paid fully .Hence cannot recieve more Fees");
+			 		  return output.toString();  
+				 }
+				 schoolFee.setBalance(schoolFee.getBalance()-amt2);
+				 if(schoolFee.getBalance()<0){
+					 output.put("error", "true");
+					 schoolFee.setBalance(schoolFee.getBalance()+amt2);
+			 		 output.put("message", schoolFee.getSchoolFeeTypeId().getFeeType()+"  Max You can receive "+schoolFee.getBalance()+" Rs");
+			 		  return output.toString();  
+				 }
+				 schoolFee.setPaidAmount(schoolFee.getPaidAmount()+amt2);
+				 schoolFee.merge();
+			 }
+		}
+	     
+	     schoolFeeReceipt.persist();
+	     for (Object object : jsonArray) {
+				JSONObject jsonObject=(JSONObject) object;
+				 Long schoolFeeId= jsonObject.getLong("schoolFeeId");
+				 String amt=(String) jsonObject.get("schoolFeePayingAmt");
+				 if(!amt.equals("")){
+					 Integer amt2=Integer.parseInt(amt);
+					 List<SchoolFee> schoolFees=SchoolFee.findSchoolFee(schoolFeeId, SessionManager.getUserContext(request).getSchoolId());
+					 if(!amt.equals("")){
+						 ReceiptSchoolFee receiptSchoolFee= new ReceiptSchoolFee();
+						 receiptSchoolFee.setPaidAmount(amt2);
+						 receiptSchoolFee.setSchoolFeeId(schoolFees.get(0));
+						 receiptSchoolFee.setSchoolFeeReceiptId(schoolFeeReceipt);
+						 receiptSchoolFee.persist();
+					 }
+				 }
+				 
+			}
+	     
+	    
+	     schoolFeeReceipt.setReceiptTotalAmount(receiptTotalAmt);
+	     schoolFeeReceipt.merge();
+	     output.put("error", "false");
+	     output.put("message", "Fee Collected Successfully");
+	     SchoolFee.generateReceiptNo(SessionManager.getUserContext(request).getSchoolId());
+	     
+	     return output.toString();
+	/* }catch(Exception e){
+	     		output.put("error", "true");
+	 			output.put("message", "Some Error Ocurred");
+	 			e.printStackTrace();
+	 		    return output.toString();
+		  }*/
+	 }
+
+	 
+	 @RequestMapping(value = "/findFeeSummary", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findFeeSummary(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+	     JSONObject output= new JSONObject();
+	     Integer studentId=input.getInt("studentId");
+	     List<SchoolFee> schoolFees=SchoolFee.findSchoolFee(studentId, SessionManager.getUserContext(request).getSchoolId());
+	     output.put("result", SchoolFee.toJsonArray(schoolFees));
+	     output.put("error", "false");
+	     
+	     return output.toString();
+	 }
+	 
+	 @RequestMapping(value = "/findReceiptDetails", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findReceiptDetails(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+		 Integer studentId=input.getInt("studentId");
+	     JSONObject output= new JSONObject();
+	     List<SchoolAcademic> schoolAcademics=SchoolAcademic.fetchCurrentSchoolAcademic(SessionManager.getUserContext(request).getSchoolId() );
+  		  if(schoolAcademics.isEmpty()){
+  			  output.put("error", "true");
+  				output.put("message", "Define active Academic Year");
+  				return output.toString();
+  		  }
+  		   Map<BigInteger, ReceiptTO> map= new HashMap<BigInteger, ReceiptTO>();
+  		   SimpleDateFormat dateFormat= new SimpleDateFormat("dd-MMM-yyyy");
+  		   List<Object[]> result= SchoolFee.findAllFullReceiptDetails(studentId, schoolAcademics.get(0).getSchoolAcademicYearId());
+  		   for (Object[] objects : result) {
+  			   ReceiptTO receiptTO=null;
+  			   if(map.containsKey((BigInteger)objects[2])){
+  				   receiptTO=map.get((BigInteger)objects[2]);
+  				   JSONArray jsonArray=receiptTO.getReceiptDetails();
+  				   JSONObject jsonObject= new JSONObject();
+  				   jsonObject.put("feeType", objects[0]);
+  			    	jsonObject.put("paidFees", objects[1]);
+  			    	jsonArray.put(jsonObject);
+  			   }else{
+  				 receiptTO=new ReceiptTO();
+  				 receiptTO.setOtherDetails((String) objects[2]);
+  				 receiptTO.setPaymentMode((String) objects[2]);
+  				 Date receiptDate=(Date) objects[4];
+  				 receiptTO.setReceiptDate(dateFormat.format(receiptDate));
+  				 receiptTO.setReceiptDetails(new JSONArray());
+  				 receiptTO.setReceiptNo((BigInteger)objects[6]);
+  				  map.put((BigInteger)objects[2], receiptTO);
+  			   }
+  			 
+  		   }
+  		   
+  		   JSONArray jsonArray= new JSONArray();
+  		   
+  		 for (Map.Entry<BigInteger, ReceiptTO> entry : map.entrySet())
+  		{
+  			 ReceiptTO receiptTO=entry.getValue();
+  			 JSONObject jsonObject= new JSONObject();
+  			 jsonObject.put("otherDetails", receiptTO.getOtherDetails());
+  			jsonObject.put("paymentMode", receiptTO.getPaymentMode());
+  			jsonObject.put("receiptDate", receiptTO.getReceiptDate());
+  			jsonObject.put("feeDetailArray", receiptTO.getReceiptDetails());
+  			jsonObject.put("receiptNo", receiptTO.getReceiptNo());
+  			jsonArray.put(jsonObject);
+  		}
+  		    output.put("error", "false");
+			output.put("message", "Success");
+			output.put("result", jsonArray);
+			return output.toString();
+	 }
+    
+	 
+	 @RequestMapping(value = "/findDueList", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findDueList(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+	     JSONObject output= new JSONObject();
+	     List<SchoolAcademic> schoolAcademics=SchoolAcademic.fetchCurrentSchoolAcademic(SessionManager.getUserContext(request).getSchoolId() );
+ 		  if(schoolAcademics.isEmpty()){
+ 			  output.put("error", "true");
+ 				output.put("message", "Define active Academic Year");
+ 				return output.toString();
+ 		  }
+	     List<Object[]> result=SchoolFee.findDueList(SessionManager.getUserContext(request).getSchoolId(), schoolAcademics.get(0).getSchoolAcademicYearId());
+	     output.put("error", "false");
+			output.put("result",new JSONSerializer().serialize(result));
+			return output.toString();
+	 }
+	 
+	 @RequestMapping(value = "/findFeeCollection", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findFeeCollection(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+	     JSONObject output= new JSONObject();
+	     List<SchoolAcademic> schoolAcademics=SchoolAcademic.fetchCurrentSchoolAcademic(SessionManager.getUserContext(request).getSchoolId() );
+ 		  if(schoolAcademics.isEmpty()){
+ 			  output.put("error", "true");
+ 				output.put("message", "Define active Academic Year");
+ 				return output.toString();
+ 		  }
+ 		  SimpleDateFormat ipdateFormat= new SimpleDateFormat("dd-MM-yyyy");
+ 		 SimpleDateFormat opdateFormat= new SimpleDateFormat("yyyy-MM-dd");
+ 		  try{
+ 			  
+ 		
+ 		  String fromDate=input.getString("fromDate");
+ 		  Date fromDateActual=ipdateFormat.parse(fromDate);
+ 		 fromDate=opdateFormat.format(fromDateActual);
+ 		 String toDate=null;
+ 		  if(input.has("toDate")){
+ 			  toDate=input.getString("toDate");
+ 			  if(toDate.equals("")){
+ 				 toDate=null;
+ 			  }
+ 		  }
+ 		  if(toDate!=null){
+ 			  Date toDateActual=ipdateFormat.parse(toDate);
+ 			  Calendar cal= Calendar.getInstance();
+ 			  cal.setTime(toDateActual);
+ 			  cal.add(1, Calendar.DATE);
+ 			  toDate=opdateFormat.format(cal.getTime());
+ 			  
+ 			  if(fromDateActual.getTime()>toDateActual.getTime()){
+ 				 output.put("error", "true");
+ 				output.put("message","From Date should be less than To Date");
+ 				return output.toString();
+ 			  }
+ 			  
+ 			  long msInterval=toDateActual.getTime()-fromDateActual.getTime();
+ 			  long dateInterval=((((msInterval/1000)/60)/60)/24);
+ 			  if(dateInterval>30){
+ 				 output.put("error", "true");
+  				output.put("message","Date Interval should be within 30 days");
+  				return output.toString();
+ 				  
+ 			  }
+ 		  }
+ 		 List<Object[]> result=SchoolFee.findFeeCollection(SessionManager.getUserContext(request).getSchoolId(), schoolAcademics.get(0).getSchoolAcademicYearId()
+	    		 , fromDate, toDate);
+	        output.put("error", "false");
+			output.put("result",new JSONSerializer().serialize(result));
+			return output.toString();
+ 		  }catch(Exception e){
+ 			 output.put("error", "true");
+ 			output.put("message","Invalid Date");
+ 			return output.toString();
+ 		  }
+	     
+	 }
+
+
+
+	 
 	
 }

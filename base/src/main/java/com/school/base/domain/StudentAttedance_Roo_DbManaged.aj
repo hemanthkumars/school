@@ -48,20 +48,9 @@ privileged aspect StudentAttedance_Roo_DbManaged {
     
     @Column(name = "ATTENDANCE_DATE")
     @NotNull
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
     private Date StudentAttedance.attendanceDate;
     
-    @Column(name = "AUDIT_CREATED_DT_TIME")
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar StudentAttedance.auditCreatedDtTime;
     
-    @Column(name = "AUDIT_MODIFIED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar StudentAttedance.auditModifiedDtTime;
     
     public Staff StudentAttedance.getAuditUserId() {
         return auditUserId;
@@ -119,20 +108,5 @@ privileged aspect StudentAttedance_Roo_DbManaged {
         this.attendanceDate = attendanceDate;
     }
     
-    public Calendar StudentAttedance.getAuditCreatedDtTime() {
-        return auditCreatedDtTime;
-    }
-    
-    public void StudentAttedance.setAuditCreatedDtTime(Calendar auditCreatedDtTime) {
-        this.auditCreatedDtTime = auditCreatedDtTime;
-    }
-    
-    public Calendar StudentAttedance.getAuditModifiedDtTime() {
-        return auditModifiedDtTime;
-    }
-    
-    public void StudentAttedance.setAuditModifiedDtTime(Calendar auditModifiedDtTime) {
-        this.auditModifiedDtTime = auditModifiedDtTime;
-    }
     
 }

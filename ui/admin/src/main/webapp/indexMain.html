@@ -40,10 +40,14 @@
       <script src="js/feeTypeMasterController.js"></script>
         <script src="js/studentFeeDefnController.js"></script>
          <script src="js/feeCollectController.js"></script>
-    
-    
-  
-  
+         <script src="js/viewfeeCollectionController.js"></script>
+         <script src="js/studentFeeDueListController.js"></script>
+         <script src="js/smsTemplate.js"></script>
+         <script src="js/studentSmsController.js"></script>
+          <script src="js/deliveryReport.js"></script>
+           <script src="js/smsByMobileNoController.js"></script>
+           <script src="js/markingAttendanceController.js"></script>
+        
   
   <script src="js/jquery-ui.js"></script>
    <link rel="stylesheet" href="css/jquery-ui.css">
@@ -117,14 +121,14 @@
          <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Attendance <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Mass Attendance</a></li>
-            <li><a href="#">Single Day Attendance</a></li>
-            <li><a href="#">Date Wise Absentees</a></li>
-             <li><a href="#">Class Wise Absentees</a></li>
+           <!--  <li><a href="#">Mass Attendance</a></li> -->
+            <li><a href="#" ng-click="swithView('markAttendance')">Mark Attendance</a></li>
+             <li><a href="#">Marking only Absentees</a></li>
+            <li><a href="#">Absentees List</a></li>
+             <li><a href="#">Leave Register</a></li>
               <li><a href="#">Regular Absentees </a></li>
-               <li><a href="#">Absentees Report</a></li>
-               <li><a href="#">Student Wise Attendance</a></li>
-                <li><a href="#">Annual Attendance</a></li>
+               <li><a href="#">Attendance Report</a></li>
+                <li><a href="#">Annual Attendance Report</a></li>
           <!--   <li role="separator" class="divider"></li> -->
           </ul>
         </li>
@@ -161,20 +165,19 @@
             <li><a href="#" ng-click="swithView('feeCollect')">Fee Collect</a></li>
             <li><a href="#" ng-click="swithView('feeTypeMaster')">Fee Type Definition</a></li>
             <li><a href="#" ng-click="swithView('studentFeeDefinition')">Student Fee Definition</a></li>
-             <li><a href="#">Due List</a></li>
-              <li><a href="#">Date Wise Collection</a></li>
+             <li><a href="#" ng-click="swithView('studentFeeDueList')">Due List</a></li>
+              <li><a href="#" ng-click="swithView('viewfeeCollection')">Date Wise Collection</a></li>
           <!--   <li role="separator" class="divider"></li> -->
           </ul>
         </li>
          <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">SMS <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Batch Wise SMS</a></li>
-            <li><a href="#">Student SMS</a></li>
+            <li><a href="#" ng-click="swithView('studentSms')">Student  SMS</a></li>
             <li><a href="#">Staff SMS</a></li>
              <li><a href="#">Home Work SMS</a></li>
-               <li><a href="#">SMS by Mobile Nos</a></li>
-               <li><a href="#">Delivery Report</a></li>
+               <li><a href="#" ng-click="swithView('smsByMobileNo')" >SMS by Mobile Nos</a></li>
+               <li><a href="#" ng-click="swithView('deliveryReport')">Delivery Report</a></li>
           <!--   <li role="separator" class="divider"></li> -->
           </ul>
         </li>

@@ -58,15 +58,7 @@ privileged aspect Sms_Roo_DbManaged {
     @Column(name = "MESSAGE_ID", length = 200)
     private String Sms.messageId;
     
-    @Column(name = "SMS_SENT_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar Sms.smsSentDtTime;
     
-    @Column(name = "SMS_DELIVERED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar Sms.smsDeliveredDtTime;
     
     public School Sms.getSchoolId() {
         return schoolId;
@@ -156,20 +148,6 @@ privileged aspect Sms_Roo_DbManaged {
         this.messageId = messageId;
     }
     
-    public Calendar Sms.getSmsSentDtTime() {
-        return smsSentDtTime;
-    }
-    
-    public void Sms.setSmsSentDtTime(Calendar smsSentDtTime) {
-        this.smsSentDtTime = smsSentDtTime;
-    }
-    
-    public Calendar Sms.getSmsDeliveredDtTime() {
-        return smsDeliveredDtTime;
-    }
-    
-    public void Sms.setSmsDeliveredDtTime(Calendar smsDeliveredDtTime) {
-        this.smsDeliveredDtTime = smsDeliveredDtTime;
-    }
+  
     
 }

@@ -1,11 +1,11 @@
 package com.school.ui.admin.controller.admin;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,15 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.school.base.domain.SchoolClass;
 import com.school.base.domain.SchoolClassSection;
-import com.school.base.domain.SchoolLogin;
 import com.school.base.domain.Section;
-import com.school.base.domain.Staff;
 import com.school.base.domain.Student;
-import com.school.base.util.EncryptAndDecrypt;
 import com.school.ui.admin.util.SessionManager;
-import com.school.ui.admin.util.UserContext;
-
-import flexjson.JSONSerializer;
 
 @RequestMapping("/admin/class")
 @Controller
@@ -224,6 +218,54 @@ public class ClassController {
 		
 		return jsonObject.toString();
 	}
+	 
+	 @RequestMapping(value = "/findClassAndClassSectionLike", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findClassAndClassSection(HttpServletRequest request,HttpServletResponse reresponse)  {
+
+			String classSearchStr=request.getParameter("param");
+			String ignoreAll=request.getParameter("ignoreAll");
+			String ignoreSchoolClass=request.getParameter("ignoreSchoolClass");
+			List<SchoolClass> schoolClassSections=SchoolClass.fetchSchoolClassLike(SessionManager.getUserContext(request).getSchoolId(), classSearchStr);
+			List<SchoolClassSection> schoolClassSections2=new ArrayList<SchoolClassSection>();
+			for (SchoolClass schoolClass : schoolClassSections) {
+				List<SchoolClassSection> temp= schoolClassSections2=SchoolClassSection.findSchoolClassSection(schoolClass.getSchoolClassId(), SessionManager.getUserContext(request).getSchoolId());
+				schoolClassSections2.addAll(temp);
+			}
+	         JSONArray jsonArray= new JSONArray();
+	         if(ignoreSchoolClass==null){
+	        	  for (SchoolClass schoolClass : schoolClassSections ) {
+	  	 			JSONObject jsonObject= new JSONObject();
+	  	 			jsonObject.put("label", schoolClass.getClassName());
+	  	 		 	jsonObject.put("value", "osc-"+schoolClass.getSchoolClassId());
+	  	 		 	jsonArray.put(jsonObject);
+	  	 		}
+	         }
+	       
+	         for (SchoolClassSection schoolClassSection : schoolClassSections2 ){
+	        		JSONObject jsonObject= new JSONObject();
+		 			jsonObject.put("label", schoolClassSection.getSchoolClassSectionName());
+		 		 	jsonObject.put("value", "scs-"+schoolClassSection.getSchoolClassSectionId());
+		 		 	jsonArray.put(jsonObject);
+			}
+	         JSONObject jsonObject1= new JSONObject();
+	 			jsonObject1.put("label", "All");
+	 		 	jsonObject1.put("value", "all-students");
+	 		 	if(ignoreAll==null){
+	 		 		jsonArray.put(jsonObject1);
+	 		 	}
+	 		 	
+	         
+	         JSONObject jsonObject= new JSONObject();
+	         jsonObject.put("error", "false");
+	         jsonObject.put("result", jsonArray.toString());
+			
+			return jsonObject.toString();
+		
+	 }
+
+	
+	 
 	 
 	 
 	

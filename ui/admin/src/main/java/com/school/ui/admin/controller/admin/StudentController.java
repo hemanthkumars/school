@@ -3,29 +3,27 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.WebUtils;
 
 import com.school.base.domain.AcademicYear;
 import com.school.base.domain.BloodGroup;
 import com.school.base.domain.Caste;
 import com.school.base.domain.City;
 import com.school.base.domain.Country;
-import com.school.base.domain.Examination;
 import com.school.base.domain.Gender;
 import com.school.base.domain.Language;
 import com.school.base.domain.Promotion;
@@ -70,6 +68,30 @@ public class StudentController {
 		
 		return output.toString();
 	}
+	
+	@RequestMapping(value = "/findAllStudentDetailsFeeCollect", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findAllStudentDetailsFeeCollect(HttpServletRequest request,HttpServletResponse reresponse)  {
+		JSONObject input=new JSONObject(request.getParameter("input"));
+		JSONObject output= new JSONObject();
+		Integer schoolClassSectionId=input.getInt("schoolClassSectionId");
+		 List<SchoolAcademic> schoolAcademics=SchoolAcademic.fetchCurrentSchoolAcademic(SessionManager.getUserContext(request).getSchoolId() );
+         
+  		  if(schoolAcademics.isEmpty()){
+  			  output.put("error", "true");
+  				output.put("message", "Define active Academic Year");
+  				return output.toString();
+  		  }
+		List<Object[]> students=Student.findStudentBySchoolClassSectioIdFeeCollect(schoolClassSectionId, 
+				SessionManager.getUserContext(request).getSchoolId(), schoolAcademics.get(0).getSchoolAcademicYearId());
+		
+		output.put("error", "false");
+		output.put("result", new JSONSerializer().serialize(students));
+		
+		return output.toString();
+	}
+	
+	
 	
 	 @RequestMapping(value = "/fetchStaticData", method = RequestMethod.POST,produces = "application/json")
 	 @ResponseBody
@@ -483,8 +505,11 @@ public class StudentController {
 	 @ResponseBody
 	 public String fetchStudentNameLike(HttpServletRequest request,HttpServletResponse reresponse)  {
 			String studentNameKey=request.getParameter("param");
+			List<Student> students= new ArrayList<Student>();
+			if(studentNameKey.length()>2){
+				 students=Student.findStudentByNameLike(studentNameKey, SessionManager.getUserContext(request).getSchoolId());	
+			}
 			
-			List<Student> students=Student.findStudentByNameLike(studentNameKey, SessionManager.getUserContext(request).getSchoolId());
 			
 	         JSONArray jsonArray= new JSONArray();
 	         for (Student student : students) {
@@ -578,6 +603,106 @@ public class StudentController {
 			 return output.toString();
 		}
 	 }
+	 
+	 
+	 @RequestMapping(value = "/findStudentForClassOrSection", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findStudentForClassOrSection(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+		 JSONObject output= new JSONObject();
+		 String classOrSectionId=input.getString("classOrSectionId");
+		 List<Object[]> result= new ArrayList<Object[]>();
+		 Map<String, Integer> map= new HashMap<String, Integer>();
+		 if(classOrSectionId.startsWith("osc")){
+		   Integer schoolClassId=Integer.parseInt(classOrSectionId.split("-")[1]);	 
+		   map.put("schoolClass", schoolClassId);
+		 }else if(classOrSectionId.startsWith("scs")){
+			 Integer schoolClassSectionId=Integer.parseInt(classOrSectionId.split("-")[1]);	 
+			 map.put("schoolClassSection", schoolClassSectionId);
+		 }
+		 map.put("schoolId", SessionManager.getUserContext(request).getSchoolId());
+		
+		 result=Student.findStudentBySchoolClassOrSchoolClassSection(map);
+		 output.put("result", new JSONSerializer().serialize(result));
+		 output.put("error", "false");
+		 return output.toString();
+	 }
+	 
+	 @RequestMapping(value = "/findStudentForClassOrSectionForAttendance", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findStudentForClassOrSectionForAttendance(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+		 JSONObject output= new JSONObject();
+		 Integer schoolId=SessionManager.getUserContext(request).getSchoolId();
+		 try{
+		 String classOrSectionId=input.getString("classOrSectionId");
+		 List<Object[]> result= new ArrayList<Object[]>();
+		 List<Integer> allStudentsIds=new ArrayList<Integer>();
+		 if(classOrSectionId.startsWith("osc")){
+		   Integer schoolClassId=Integer.parseInt(classOrSectionId.split("-")[1]);
+		   List<Integer> studentIds =  Student.findStudentIdsBySchoolClassId(schoolClassId, schoolId);
+		   allStudentsIds.addAll(studentIds);
+		 }else if(classOrSectionId.startsWith("scs")){
+			 Integer schoolClassSectionId=Integer.parseInt(classOrSectionId.split("-")[1]);	 
+			 List<Integer> studentIds =  Student.findStudentIdsBySchoolClassSectioId(schoolClassSectionId, schoolId);
+			   allStudentsIds.addAll(studentIds);
+		 }
+		 
+		 SimpleDateFormat inputDateFromat=new SimpleDateFormat("dd-MM-yyyy");
+		 SimpleDateFormat queryDateFromat=new SimpleDateFormat("yyyy-MM-dd");
+		 Date inputDate=inputDateFromat.parse(input.getString("attendanceDate"));
+		 String dateStrForQuering=queryDateFromat.format(inputDate);
+		 String allStudentIdsStr=allStudentsIds.toString();
+		 allStudentIdsStr=allStudentIdsStr.replace("[", "(");
+		 allStudentIdsStr=allStudentIdsStr.replace("]", ")");
+		 List<SchoolAcademic> schoolAcademics  = SchoolAcademic.fetchCurrentSchoolAcademic(SessionManager.getUserContext(request).getSchoolId());
+		 if(schoolAcademics.isEmpty()){
+			 output.put("error", "true");
+			 output.put("message","no active year" );
+			 return output.toString();
+		 }
+		 
+		 
+		 Integer schoolSessionId= input.getInt("schoolSessionId");
+		 List<Integer> studentIdsWhoHasAttendanceMarking=StudentAttedance.
+				 findStudentAttedanceForStudentId(allStudentIdsStr, schoolId, inputDate, schoolSessionId, schoolAcademics.get(0).getSchoolAcademicYearId());
+          List<Object[]> finalAttendanceResult=new ArrayList<Object[]>();
+          allStudentsIds.removeAll(studentIdsWhoHasAttendanceMarking);
+          allStudentIdsStr=allStudentsIds.toString();
+          allStudentIdsStr=allStudentIdsStr.replace("[", "(");
+ 		 allStudentIdsStr=allStudentIdsStr.replace("]", ")");
+          
+          String studentIdsWhoHasAttendanceMarkingStr=studentIdsWhoHasAttendanceMarking.toString();
+          studentIdsWhoHasAttendanceMarkingStr=studentIdsWhoHasAttendanceMarkingStr.replace("[", "(");
+          studentIdsWhoHasAttendanceMarkingStr=studentIdsWhoHasAttendanceMarkingStr.replace("]", ")");
+          List<Object[]> attendanceDisplayWhoHasMarking=StudentAttedance.findStudentAttendanceforStudentIdsWhoHasMarking(studentIdsWhoHasAttendanceMarkingStr, dateStrForQuering, schoolSessionId,
+        		  schoolAcademics.get(0).getSchoolAcademicYearId(), schoolId);
+          List<Object[]> attendanceDisplayWhoDontHaveMarking=StudentAttedance.findStudentAttendanceforStudentIdsWhoDonotHaveMarking
+        		  (allStudentIdsStr, schoolAcademics.get(0).getSchoolAcademicYearId(), schoolId);
+          
+          finalAttendanceResult.addAll(attendanceDisplayWhoDontHaveMarking);
+          finalAttendanceResult.addAll(attendanceDisplayWhoHasMarking);
+		 
+		 output.put("result", new JSONSerializer().serialize(finalAttendanceResult));
+		 output.put("error", "false");
+		 output.put("message", "Now Select Students, mark attendance and Save it");
+		 return output.toString();
+	 } catch (ParseException e) {
+			output.put("error", "true");
+			 output.put("message", "Invalid Date");
+			 e.printStackTrace();
+			 return output.toString();
+		}
+       catch (Exception e) {
+				output.put("error", "true");
+				 output.put("message", "Some Error Occurred");
+				 e.printStackTrace();
+				 return output.toString();
+			}
+	 }
+
+
+	 
 	 
 	
 	

@@ -282,6 +282,7 @@ function deleteStudent(studentId){
 	        			alertify.error(data.message);
 	        			location.href="#/login";
 	        		}
+	        		alertify.error(data.message);
 	        	}
 	        	
 	        },

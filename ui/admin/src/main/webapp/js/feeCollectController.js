@@ -102,7 +102,7 @@ function enableAutoCompleteForFeeCollect(){
         }
      })	;
 }
-
+var schoolFeeIds=[];
 function findSchoolFeeDefnForPaying(studentIdSelected){
     var input={"studentId":studentIdSelected};
     $.ajax({
@@ -112,27 +112,73 @@ function findSchoolFeeDefnForPaying(studentIdSelected){
         data: {"input":JSON.stringify(input)} ,
         success: function(data) {
         	if(data.error=="false"){
+        		$("#studentFeeDefinitionData").empty();
         		var feeDefnData=JSON.parse(data.schoolFeeData);
-        		var studentData=data.studentData;
-        		var schoolFeeIds=JSON.parse(data.schoolFeeIds);
+        		var results=feeDefnData;
+        		var studentData=JSON.parse(data.studentData);
+        		 schoolFeeIds=data.schoolFeeIds;
         		
         		var studentFeeDefinitionData="";
         		studentFeeDefinitionData+=studentData.firstName+"  " ;
         		studentFeeDefinitionData+=studentData.schoolClassSectionId.code+"  ";
         		studentFeeDefinitionData+=studentData.fatherName+"  ";
         		studentFeeDefinitionData+=studentData.fatherMobile+"  ";
-        		for (var int = 0; int < feeDefnData.length; int++) {
-					var slNo=int;
-					slNo+=1;
-					var feeType=feeDefnData[int].feeType;
-					var feeAmount=feeDefnData[int].feeAmount;
-					var paidFees=feeDefnData[int].paidFees;
-					var balance=feeDefnData[int].balance;
-					var schooFeeId=feeDefnData[int].schooFeeId;
-					
-					
-					 	
-				}
+        		
+        		studentFeeDefinitionData="";
+        							studentFeeDefinitionData+=" <table class='table' >";
+        							studentFeeDefinitionData+="     <thead>";
+        							studentFeeDefinitionData+="       <tr>";
+        							studentFeeDefinitionData+="         <th>Sl No</th>";
+        							studentFeeDefinitionData+="         <th>Fee Type</th>";
+        							studentFeeDefinitionData+="         <th>Fee Amount</th>";
+        							studentFeeDefinitionData+="         <th>Paid Amount</th>";
+        							studentFeeDefinitionData+="          <th>Balance Amount</th>";
+        							studentFeeDefinitionData+="          <th>Paying Amount</th>";
+        							studentFeeDefinitionData+="       </tr>";
+        							studentFeeDefinitionData+="     </thead>";
+        							studentFeeDefinitionData+="     <tbody>";
+                                    var totalFees=0;
+                                    var totalPaid=0;
+                                    var totalBal=0;
+        							for (var int = 0; int < results.length; int++) {
+        								var slno=int;
+        								slno+=1;
+        								studentFeeDefinitionData+="<tr>";
+        								studentFeeDefinitionData+="   <td>"+slno+"</td>";
+        								studentFeeDefinitionData+="   <td>"+results[int].schoolFeeTypeId.feeType+"</td>";
+        								studentFeeDefinitionData+="   <td>"+results[int].totalAmount+"</td>";
+        								totalFees+=results[int].totalAmount;
+        								studentFeeDefinitionData+="   <td>"+results[int].paidAmount+"</td>";
+        								totalPaid+=results[int].paidAmount;
+        								studentFeeDefinitionData+="   <td>"+results[int].balance+"</td>";
+        								totalBal+=results[int].balance
+        								if(results[int].schoolFeeTypeId.isConcessionType==1){
+        									studentFeeDefinitionData+="   <td><input type='text' disabled='disabled' value='' class='form-control'  id="+results[int].schoolFeeId+"sfId"+" /></td>";
+        								}else{
+        									studentFeeDefinitionData+="   <td><input type='text' value='' class='form-control'  id="+results[int].schoolFeeId+"sfId"+" /></td>";
+        								}
+        								
+        								studentFeeDefinitionData+=" </tr>";
+        							}
+        							studentFeeDefinitionData+="     </tbody>";
+        							studentFeeDefinitionData+=" </table>";
+        							studentFeeDefinitionData+=" Total Fee : "+totalFees+" ";
+        							studentFeeDefinitionData+=" Total Paid: "+totalPaid+" ";
+        							studentFeeDefinitionData+=" Total Bal : "+totalBal+" ";
+        							studentFeeDefinitionData+=" <br/><input type='text' value='' id='paymentDetails' class='form-control' style='width: 180px;display: inline-block;' placeholder='Other Details like Cheque No etc..' />";
+        							studentFeeDefinitionData+='  <select class="form-control"   id="paymentType"    style="width: 180px;display: inline-block;">';
+        							studentFeeDefinitionData+='  <option value='+1+'>CASH</option>';
+        							studentFeeDefinitionData+='  <option value='+2+'>CARD</option>';
+        							studentFeeDefinitionData+='  <option value='+3+'>CHEQUE</option>';
+        							studentFeeDefinitionData+='  </select>';
+        							studentFeeDefinitionData+="   <input type='button' class='btn btn-primary' id='payFeeButton' value='Pay Fees' onclick=\"payFees()\" />";
+        							
+        							$("#studentFeeDefinitionData").append(studentFeeDefinitionData);
+        							$("#studentDisplayInfo").empty();
+        							$("#studentDisplayInfo").append(studentData.firstName+"  ( "+studentData.schoolClassSectionId.code+"  )");
+        							
+        							$("#payFeeModal").modal("show");
+        							
         	}else{
         		if(data.errorCode!=undefined){
         			alertify.error(data.message);
@@ -155,7 +201,7 @@ function findAllStudentDataForPaying(fcSchoolClassSectionId){
     $.ajax({
         dataType: "json",
         type : 'POST',
-        url: 'admin/student/findAllStudentDetails;jsessionid='+JSESSIONID,
+        url: 'admin/student/findAllStudentDetailsFeeCollect;jsessionid='+JSESSIONID,
         data: {"input":JSON.stringify(input)} ,
         success: function(data) {
         	if(data.error=="false"){
@@ -181,15 +227,22 @@ function findAllStudentDataForPaying(fcSchoolClassSectionId){
 function populateStudentDataForPayment(results){
 	var studentsData=""
 		$("#studentsData").empty();
+	if(results.length!=0){
+          studentsData+="<input type='button' value='Bulk Fee Summary Print' onclick=\"bulkFeeSummaryPrint()\" />";
+	}
 		studentsData="";
 							studentsData+=" <table class='table' >";
 							studentsData+="     <thead>";
 							studentsData+="       <tr>";
 							studentsData+="         <th>Sl No</th>";
-							studentsData+="         <th>Class</th>";
 							studentsData+="         <th>Name</th>";
-							studentsData+="          <th>Father Name</th>";
-							studentsData+="          <th>Action</th>";
+							studentsData+="         <th>Class</th>";
+							studentsData+="          <th>Total Fees</th>";
+							studentsData+="          <th>Total Paid</th>";
+							studentsData+="          <th>Total Balance</th>";
+							studentsData+="          <th>Pay</th>";
+							studentsData+="          <th>Fee Summary</th>";
+							studentsData+="          <th>Receipt</th>";
 							studentsData+="       </tr>";
 							studentsData+="     </thead>";
 							studentsData+="     <tbody>";
@@ -199,10 +252,21 @@ function populateStudentDataForPayment(results){
 								slno+=1;
 								studentsData+=" <tr>";
 								studentsData+="   <td>"+slno+"</td>";
-								studentsData+="   <td>"+results[int].schoolClassSectionId.code+"</td>";
-								studentsData+="   <td>"+results[int].firstName+"</td>";
-								studentsData+="   <td>"+results[int].fatherName+"</td>";
-								studentsData+="   <td><input type='button' value='Select' onclick=\"findSchoolFeeDefnForPaying("+results[int].studentId+")\" /></td>";	
+								studentsData+="   <td>"+results[int][1]+"</td>";
+								studentsData+="   <td>"+results[int][5]+"</td>";
+								if(results[int][2]!=null){
+									studentsData+="   <td>"+results[int][2]+"</td>";
+									studentsData+="   <td>"+results[int][3]+"</td>";
+									studentsData+="   <td>"+results[int][4]+"</td>";
+								}else{
+									studentsData+="   <td>No Fee Defined</td>";
+									studentsData+="   <td>-</td>";
+									studentsData+="   <td>-</td>";
+								}
+								
+								studentsData+="   <td><input type='button' value='Pay' onclick=\"findSchoolFeeDefnForPaying("+results[int][0]+")\" /></td>";
+								studentsData+="   <td><input type='button' value='Fee Summary' onclick=\"findFeeSummary("+results[int][0]+")\" /></td>";
+								studentsData+="   <td><input type='button' value='Receipt' onclick=\"findReceiptDetails("+results[int][0]+")\" /></td>";
 								studentsData+=" </tr>";
 							}
 
@@ -215,21 +279,33 @@ function populateStudentDataForPayment(results){
 
 
 
-function payFees(fcSchoolClassSectionId){
-	$(".text-field").each(function() {
-	    alert($(this).val());
-	});
-	
-	  var input={"schoolClassSectionId":fcSchoolClassSectionId};
+function payFees(){
+	 
+	  var schoofeeIdData=[];
+	  var atleastOneFees=false;
+	  for (var int = 0; int < schoolFeeIds.length; int++) {
+		   var schoolFeePayingAmt=$("#"+schoolFeeIds[int]+"sfId").val();
+		   if(schoolFeePayingAmt!=""){
+			   atleastOneFees=true;
+		   }
+		   var schoolFeeJson={"schoolFeeId":schoolFeeIds[int] , "schoolFeePayingAmt":schoolFeePayingAmt};
+		   schoofeeIdData.push(schoolFeeJson);
+       }
+	  if(!atleastOneFees){
+		  alertify.error("Please fill  atleast one amount");
+		  return;
+	  }
+	  var input={"schoolFeeArray":schoofeeIdData,"paymentTypeId":$("#paymentType").val()};
 	    $.ajax({
 	        dataType: "json",
 	        type : 'POST',
-	        url: 'admin/student/payFees;jsessionid='+JSESSIONID,
+	        url: 'admin/fee/payFees;jsessionid='+JSESSIONID,
 	        data: {"input":JSON.stringify(input)} ,
 	        success: function(data) {
 	        	if(data.error=="false"){
-	        		var results=JSON.parse(data.result);
-	        		
+	        		alertify.success(data.message);
+	        		 findAllStudentDataForPaying(fcSchoolClassSectionId);
+	        		$("#payFeeModal").modal("hide");
 	        	}else{
 	        		if(data.errorCode!=undefined){
 	        			alertify.error(data.message);
@@ -251,7 +327,7 @@ function findReceiptDetails(studentId){
     $.ajax({
         dataType: "json",
         type : 'POST',
-        url: 'admin/student/findReceiptDetails;jsessionid='+JSESSIONID,
+        url: 'admin/fee/findReceiptDetails;jsessionid='+JSESSIONID,
         data: {"input":JSON.stringify(input)} ,
         success: function(data) {
         	if(data.error=="false"){
@@ -264,14 +340,11 @@ function findReceiptDetails(studentId){
         		}
         		alertify.error(data.message);
         	}
-        	
         },
         error: function(data) {
           //  $('input.suggest-user').removeClass('ui-autocomplete-loading');  
         }
     });
-	
-	
 }
 
 

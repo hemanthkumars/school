@@ -101,6 +101,45 @@ angular.module("app",['ui.router'])
       templateUrl: 'templates/feeCollect.html'
     })
     
+    .state('studentFeeDueList', {
+      url: '/studentFeeDueList',
+      templateUrl: 'templates/studentFeeDueList.html'
+    })
+    
+    .state('viewfeeCollection', {
+      url: '/viewfeeCollection',
+      templateUrl: 'templates/viewfeeCollection.html'
+    })
+    
+     .state('smsTemplate', {
+      url: '/smsTemplate',
+      templateUrl: 'templates/smsTemplate.html'
+    })
+    
+     .state('studentSms', {
+      url: '/studentSms',
+      templateUrl: 'templates/studentSms.html'
+    })
+    
+     .state('deliveryReport', {
+      url: '/deliveryReport',
+      templateUrl: 'templates/deliveryReport.html'
+    })
+    
+    .state('smsByMobileNo', {
+      url: '/smsByMobileNo',
+      templateUrl: 'templates/smsByMobileNo.html'
+    })
+    
+    .state('markAttendance', {
+      url: '/markAttendance',
+      templateUrl: 'templates/markAttendance.html'
+    })
+    
+    
+    
+    
+    
 
   
 $urlRouterProvider.otherwise('/login')

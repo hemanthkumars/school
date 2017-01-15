@@ -3,22 +3,14 @@
 
 package com.school.base.domain;
 
-import com.school.base.domain.PaymentType;
-import com.school.base.domain.ReceiptSchoolFee;
-import com.school.base.domain.School;
-import com.school.base.domain.SchoolFeeReceipt;
-import com.school.base.domain.Staff;
-import java.util.Calendar;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
 
 privileged aspect SchoolFeeReceipt_Roo_DbManaged {
     
@@ -38,17 +30,13 @@ privileged aspect SchoolFeeReceipt_Roo_DbManaged {
     private Staff SchoolFeeReceipt.auditUserId;
     
     @Column(name = "SCHOOL_RECEIPT_NO")
-    @NotNull
     private Integer SchoolFeeReceipt.schoolReceiptNo;
     
     @Column(name = "RECEIPT_TOTAL_AMOUNT")
     @NotNull
     private Integer SchoolFeeReceipt.receiptTotalAmount;
     
-    @Column(name = "AUDIT_CREATED_DT_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar SchoolFeeReceipt.auditCreatedDtTime;
+    
     
     public Set<ReceiptSchoolFee> SchoolFeeReceipt.getReceiptSchoolFees() {
         return receiptSchoolFees;
@@ -96,14 +84,6 @@ privileged aspect SchoolFeeReceipt_Roo_DbManaged {
     
     public void SchoolFeeReceipt.setReceiptTotalAmount(Integer receiptTotalAmount) {
         this.receiptTotalAmount = receiptTotalAmount;
-    }
-    
-    public Calendar SchoolFeeReceipt.getAuditCreatedDtTime() {
-        return auditCreatedDtTime;
-    }
-    
-    public void SchoolFeeReceipt.setAuditCreatedDtTime(Calendar auditCreatedDtTime) {
-        this.auditCreatedDtTime = auditCreatedDtTime;
     }
     
 }
