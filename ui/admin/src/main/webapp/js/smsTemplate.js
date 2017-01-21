@@ -1,6 +1,7 @@
 angular.module('app')
 .controller ('smsTemplateCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
-	   $scope.findSmsTemplateData=function(){
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
+	$scope.findSmsTemplateData=function(){
 			var serverPath="admin/sms/findSmsTemplateData";
 			var input={};
 			$http({

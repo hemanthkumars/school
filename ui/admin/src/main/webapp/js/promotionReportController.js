@@ -1,6 +1,6 @@
 angular.module('app')
 .controller ('promoteReportCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile) {
-   
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$scope.findPromotionReport=function(){
 		$scope.academicYears="";
     	if($("#fromAcademic").val()==""||$("#fromAcademic").val()==undefined){

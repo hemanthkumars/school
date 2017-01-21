@@ -117,6 +117,11 @@ public class Student {
 		return list;
 	}
 	
+	public static List<Integer>  findFullSchoolStudentIdsBySchoolClassId(Integer schoolId){
+		List<Integer> list=entityManager().createQuery("SELECT sl.studentId FROM Student sl WHERE sl.schoolId.schoolId="+schoolId+" ").getResultList();
+		return list;
+	}
+	
 	
 	public static List<Integer>  findStudentIdsBySchoolClassSectioId(Integer schoolClassSectioId,Integer schoolId){
 		List<Integer> list=entityManager().createQuery("SELECT sl.studentId FROM Student sl WHERE sl.schoolClassSectionId.schoolClassSectionId="+schoolClassSectioId+" AND sl.schoolId.schoolId="+schoolId+" ").getResultList();

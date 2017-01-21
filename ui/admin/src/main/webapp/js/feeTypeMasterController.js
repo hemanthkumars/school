@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('feeTypeMasterCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$scope.feeType=0;
 	 $scope.fetchFeeType=function(){
 			var serverPath="admin/fee/fetchFeeType";

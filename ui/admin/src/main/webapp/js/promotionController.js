@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('promotionCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$scope.resetClassPromotion1=function(){
 		fromSchoolClassSectionId=0;
 		$("#fromClassPromotion").val("");

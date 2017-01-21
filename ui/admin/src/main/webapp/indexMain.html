@@ -10,10 +10,15 @@
  <script src="libs/angular.min.js"></script>
  <script src="libs/angular-route.min.js"></script>
  <script src="libs/angular-ui-router.min.js"></script>
+<!--  <script src="libs/tether.min.js"></script> -->
+<!--  <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script> -->
  
   <script src="libs/jquery.min.js"></script>
   <link rel="stylesheet" href="css/bootstrap.min.css"/>
+  <!-- <link rel="stylesheet" href="css/bootstrap4-alpha3.min.css"/> -->
+  
   <script src="libs/bootstrap.min.js"></script>
+  <!-- <script src="libs/bootstrap4-alpha3.min.js"></script> -->
 
  <script src="libs/alertify.min.js"></script>
   <link rel="stylesheet" href="css/alertify.min.css">
@@ -47,6 +52,9 @@
           <script src="js/deliveryReport.js"></script>
            <script src="js/smsByMobileNoController.js"></script>
            <script src="js/markingAttendanceController.js"></script>
+           <script src="js/markOnlyAbsenteesController.js"></script>
+           <script src="js/leaveRegisterController.js"></script>
+           
         
   
   <script src="js/jquery-ui.js"></script>
@@ -123,9 +131,9 @@
           <ul class="dropdown-menu">
            <!--  <li><a href="#">Mass Attendance</a></li> -->
             <li><a href="#" ng-click="swithView('markAttendance')">Mark Attendance</a></li>
-             <li><a href="#">Marking only Absentees</a></li>
+             <li><a href="#" ng-click="swithView('markOnlyAbsentees')">Marking only Absentees</a></li>
             <li><a href="#">Absentees List</a></li>
-             <li><a href="#">Leave Register</a></li>
+             <li><a href="#" ng-click="swithView('leaveRegister')">Leave Register</a></li>
               <li><a href="#">Regular Absentees </a></li>
                <li><a href="#">Attendance Report</a></li>
                 <li><a href="#">Annual Attendance Report</a></li>

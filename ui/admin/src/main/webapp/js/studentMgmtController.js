@@ -1,5 +1,7 @@
 angular.module('app')
 .controller ('studentMgmtCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enableAutoCompleteForStudent(),0);
 	
 	$scope.resetClassSectionData=function(){
@@ -190,8 +192,15 @@ function populateStudentData(results){
 	var studentFullData=""
 		$("#studentFullData").empty();
 		studentFullData="";
-							studentFullData+=" <table class='table' >";
-							studentFullData+="     <thead>";
+		studentFullData+=' <div class="portlet box green">';
+		studentFullData+='      <div class="portlet-title">';
+		studentFullData+='          <div class="caption">';
+		studentFullData+='             <!--  <i class="fa fa-cogs"></i> -->Student List </div>';
+		studentFullData+='      </div>';
+		studentFullData+='      <div class="portlet-body flip-scroll">';
+
+							studentFullData+=" <table class='table table-bordered table-striped table-condensed flip-content' >";
+							studentFullData+="     <thead class='flip-content'>";
 							studentFullData+="       <tr>";
 							studentFullData+="         <th>Sl No</th>";
 							studentFullData+="         <th>Class</th>";
@@ -228,7 +237,9 @@ function populateStudentData(results){
 
 							studentFullData+="     </tbody>";
 							studentFullData+=" </table>";
-							
+							studentFullData+='     </div>';
+							studentFullData+=' </div>';
+
 							$("#studentFullData").append(studentFullData);
 	
 }

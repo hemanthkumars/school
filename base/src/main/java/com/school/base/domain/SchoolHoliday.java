@@ -79,6 +79,25 @@ public class SchoolHoliday {
 		return list;
 	}
 	
+	public static List<Integer>  findSchoolHoliday(Integer schoolSessionId,Integer schoolId,Integer schoolAcademicYearId,String dateStr){
+		if(schoolSessionId==null){
+			List<Integer> list=entityManager().createNativeQuery("SELECT sh.SCHOOL_HOLIDAY_ID "
+					+ " FROM `school_holiday` sh "
+					+ " WHERE sh.SCHOOL_ACADEMIC_YEAR_ID="+schoolAcademicYearId+" "
+							+ " AND sh.HOLIDAY_DATE='"+dateStr+"' AND sh.SCHOOL_ID="+schoolId+"").getResultList();
+			return list;
+		}else{
+			List<Integer> list=entityManager().createNativeQuery("SELECT sh.SCHOOL_HOLIDAY_ID "
+					+ " FROM `school_holiday` sh "
+					+ " WHERE sh.SCHOOL_ACADEMIC_YEAR_ID="+schoolAcademicYearId+" AND sh.SCHOOL_SESSION_ID="+schoolSessionId+"   "
+							+ " AND sh.HOLIDAY_DATE='"+dateStr+"' AND sh.SCHOOL_ID="+schoolId+"").getResultList();
+			return list;
+		}
+		
+		
+		
+	}
+	
 	
 	@Override
   	protected void finalize() throws Throwable {

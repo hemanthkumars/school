@@ -1,6 +1,7 @@
 angular.module('app')
 .controller ('subjectDefnctrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile) {
-    $scope.fetchSubject=function(){
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
+	$scope.fetchSubject=function(){
     			var serverPath="admin/subject/fetchSubjects";
     			var input={};
     			$http({

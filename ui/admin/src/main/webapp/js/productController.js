@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('productController', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(makeAuto(), 0);
 	$( "#taxId" ).val(10);
 	$( "#taxPercentage" ).val(1);

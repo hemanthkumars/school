@@ -1,4 +1,4 @@
-<div ng-controller="markingAttendanceCtrl">
+<div ng-controller="markingAttendanceCtrl" class="page-content">
 <div class="container">
   <h2>Mark Attendance</h2>
   <input type="text" ng-model="attendanceDate" ng-click="resetAttendanceSavingData()" ng-focus="resetAttendanceSavingData()" id="attendanceDate" class="form-control"  placeholder="dd-mm-yyyy" style="width: 150px;display: inline-block;"/>
@@ -16,4 +16,44 @@
  
 </div>
 </div>
+
+
+
+                                            <div class="portlet box green">
+                                                    <div class="portlet-title">
+                                                        <div class="caption">
+                                                           <!--  <i class="fa fa-cogs"></i> -->Student List </div>
+                                                    </div>
+                                                    <div class="portlet-body flip-scroll">
+                                                        <table class="table table-bordered table-striped table-condensed flip-content">
+                                                            <thead class="flip-content">
+                                                                <tr>
+                                                                    <th width="20%"> Code </th>
+                                                                    <th> Company </th>
+                                                                    <th class="numeric"> Price </th>
+                                                                    <th class="numeric"> Change </th>
+                                                                    <th class="numeric"> Change % </th>
+                                                                    <th class="numeric"> Open </th>
+                                                                    <th class="numeric"> High </th>
+                                                                    <th class="numeric"> Low </th>
+                                                                    <th class="numeric"> Volume </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td> AAC </td>
+                                                                    <td> AUSTRALIAN AGRICULTURAL COMPANY LIMITED. </td>
+                                                                    <td class="numeric"> &nbsp; </td>
+                                                                    <td class="numeric"> -0.01 </td>
+                                                                    <td class="numeric"> -0.36% </td>
+                                                                    <td class="numeric"> $1.39 </td>
+                                                                    <td class="numeric"> $1.39 </td>
+                                                                    <td class="numeric"> &nbsp; </td>
+                                                                    <td class="numeric"> 9,395 </td>
+                                                                </tr>
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
 

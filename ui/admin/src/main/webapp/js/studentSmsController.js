@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('studentSmsCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enableAutoCompleteForStudentSMS(),0);
 	calculateSMSCOunt();
 	$scope.resetClassNameForSms=function(){

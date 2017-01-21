@@ -1,6 +1,6 @@
 angular.module('app')
 .controller ('birthdayCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state) {
-
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
  });
 
 function findBirthDayList(){

@@ -136,6 +136,16 @@ angular.module("app",['ui.router'])
       templateUrl: 'templates/markAttendance.html'
     })
     
+     .state('markOnlyAbsentees', {
+      url: '/markOnlyAbsentees',
+      templateUrl: 'templates/markOnlyAbsentees.html'
+    })
+    
+     .state('leaveRegister', {
+      url: '/leaveRegister',
+      templateUrl: 'templates/leaveRegister.html'
+    })
+    
     
     
     

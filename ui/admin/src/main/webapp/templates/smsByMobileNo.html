@@ -1,4 +1,4 @@
-<div ng-controller="smsByMobileNoCtrl">
+<div ng-controller="smsByMobileNoCtrl" class="page-content">
 <div class="container">
   <h2>SMS by Mobile Nos</h2>
   <select class="form-control" ng-model="templateName" id="templateName" ng-options="item as item.smsTemplateName for item in smsTemplates track by item.schoolSmsTemplateId"  style="width: 300px;display: inline-block;" ng-change="findTemplateDetails()">

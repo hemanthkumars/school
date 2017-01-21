@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('holidaydayctrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enableholidayDate(), 0);
 	  $scope.fetchCurrentAcademic=function(){
  			var serverPath="admin/schoolsetup/fetchCurrentAcademicYear";

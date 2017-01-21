@@ -1,6 +1,7 @@
 angular.module('app')
 .controller ('classMasterDefnCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile) {
 alertify.success("inside classMasterDefnCtrl " );
+$('#fullDashBoard').attr('style', 'visibility: collapse;');
    
     $scope.saveClassDefn=function(){
     	if($scope.className==""||$scope.className==undefined){

@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('viewFeeCollectionCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enableDatePickerForFeeCollectionPage(),0);
 	$scope.totalFeesCollected=0;
 	$scope.resetFeeCollectionViewing1=function(){

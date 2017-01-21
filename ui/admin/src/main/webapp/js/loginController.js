@@ -1,8 +1,9 @@
 angular.module('app')
 .controller ('loginController', function($scope,$rootScope,$stateParams,$http,$filter,$state) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$('#userName').focus();
 	$rootScope.urlappend="http://localhost:8555/admin/";
-	//$rootScope.urlappend="http://easybolt.in/bolt/";
+	//$rootScope.urlappend="http://easybolt.in/admin/";
 	
 	$rootScope.JSESSIONID="";
 	$rootScope.schoolName="";
@@ -72,6 +73,7 @@ angular.module('app')
 	        		$rootScope.JSESSIONID=data.JSESSIONID;
 	        		JSESSIONID=data.JSESSIONID;
                     $("#menuGrid").show();
+                    $("#quikNavigationDiv").show();
                     $rootScope.fetchAcademicYear();
 	        		$state.go("dashboard",{});
 	        	}else{
@@ -90,6 +92,6 @@ angular.module('app')
     
  });
 
-//var urlappend="http://easybolt.in/bolt/";
+//var urlappend="http://easybolt.in/admin/";
 var urlappend="http://localhost:8555/admin/";
 var JSESSIONID="";

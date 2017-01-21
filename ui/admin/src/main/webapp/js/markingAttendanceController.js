@@ -1,6 +1,7 @@
 angular.module('app')
 .controller ('markingAttendanceCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
-   $timeout(enableAutoCompleteForMarkingAttendance(),0);
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
+	$timeout(enableAutoCompleteForMarkingAttendance(),0);
    
    $scope.findSchoolSessionsForAttendance=function(){
 		var serverPath="admin/schoolsetup/findSchoolSessions";

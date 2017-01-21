@@ -1,6 +1,7 @@
 angular.module('app')
 .controller ('studentFeeDueListCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
-	 $scope.findFeeDueList=function(){
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
+	$scope.findFeeDueList=function(){
 			var serverPath="admin/fee/findDueList";
 			var input={};
 			$http({

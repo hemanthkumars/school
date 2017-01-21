@@ -37,6 +37,8 @@ public class SecurityFilter implements Filter{
 		if(servletPath.startsWith("/admin/login/authenticateLogin")
 				|| servletPath.equals("/index.html")
 				||servletPath.equals("/indexMain.html")
+				||servletPath.equals("/indexNew.html")
+				||servletPath.equals("/indexNew2.html")
 				||servletPath.startsWith("/libs")
 				||servletPath.startsWith("/js")
 				||servletPath.startsWith("/styles")
@@ -45,6 +47,7 @@ public class SecurityFilter implements Filter{
 				||servletPath.startsWith("/fonts")
 				||servletPath.startsWith("/css")
 				||servletPath.startsWith("/images")
+				||servletPath.startsWith("/assets")
 				||servletPath.equals("")){
 			chain.doFilter(request, response);
 		}else if(userContext==null){

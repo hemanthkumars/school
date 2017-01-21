@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('deliveryReportCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enabledatePickerForDeliveryReport(),0);
 	$scope.resetDateForDelivery=function(){
 		$("#smsSentDate").val("");

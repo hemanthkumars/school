@@ -1,6 +1,7 @@
 angular.module('app')
 .controller ('studentFeeDefnCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
-    $timeout(enableAutoCompleteForStudentFeeDefn(),0);
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
+	$timeout(enableAutoCompleteForStudentFeeDefn(),0);
 	   $scope.loadFeeTypeData=function(){
 	    	//if($rootScope.feeTypeData!=undefined||$rootScope.feeTypeData!=""){
 	    		var serverPath="admin/fee/fetchFeeType";

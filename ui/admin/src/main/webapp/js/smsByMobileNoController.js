@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('smsByMobileNoCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(clearTextarea(),0);
 	calculateSMSCOunt();
 	$scope.resetClassNameForSms=function(){

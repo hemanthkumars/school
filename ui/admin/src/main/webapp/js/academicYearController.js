@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('academicYearCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$timeout,$compile) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	alertify.success("academicYearCtrl");
 	$timeout(enableDatePicker(), 0);
 	

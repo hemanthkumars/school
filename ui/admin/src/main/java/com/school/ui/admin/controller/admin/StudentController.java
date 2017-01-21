@@ -506,7 +506,7 @@ public class StudentController {
 	 public String fetchStudentNameLike(HttpServletRequest request,HttpServletResponse reresponse)  {
 			String studentNameKey=request.getParameter("param");
 			List<Student> students= new ArrayList<Student>();
-			if(studentNameKey.length()>2){
+			if(studentNameKey.length()>=2){
 				 students=Student.findStudentByNameLike(studentNameKey, SessionManager.getUserContext(request).getSchoolId());	
 			}
 			
@@ -647,6 +647,11 @@ public class StudentController {
 			 List<Integer> studentIds =  Student.findStudentIdsBySchoolClassSectioId(schoolClassSectionId, schoolId);
 			   allStudentsIds.addAll(studentIds);
 		 }
+		 if(allStudentsIds.isEmpty()){
+			 output.put("error", "true");
+			 output.put("message","They are no student admitted to this class .Hence cannot mark attendance" );
+			 return output.toString();
+		 }
 		 
 		 SimpleDateFormat inputDateFromat=new SimpleDateFormat("dd-MM-yyyy");
 		 SimpleDateFormat queryDateFromat=new SimpleDateFormat("yyyy-MM-dd");
@@ -701,6 +706,23 @@ public class StudentController {
 			}
 	 }
 
+	 @RequestMapping(value = "/findStudentDataForMarkingAbsent", method = RequestMethod.POST,produces = "application/json")
+	 @ResponseBody
+	 public String findStudentDataForMarkingAbsent(HttpServletRequest request,HttpServletResponse reresponse)  {
+		 JSONObject input= new JSONObject(request.getParameter("input"));
+		 JSONObject output= new JSONObject();
+		 Integer studentId=input.getInt("studentId");
+		 Student student=Student.findStudent(studentId, SessionManager.getUserContext(request).getSchoolId()).get(0);
+		 JSONObject jsonObject= new JSONObject();
+		 jsonObject.put("studentId", student.getStudentId());
+		 jsonObject.put("studentName", student.getFirstName());
+		 jsonObject.put("fatherName", student.getFatherName());
+		 jsonObject.put("fatherMobile", student.getFatherMobile());
+		 output.put("error", "false");
+		 output.put("result", jsonObject);
+		 
+		 return output.toString();
+	 }
 
 	 
 	 

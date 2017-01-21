@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('manageClassCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$scope.fetchSchoolClassSection=function(){
 	    	
 			var serverPath="admin/class/fetchSchoolClassSection";

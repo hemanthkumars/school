@@ -1,5 +1,6 @@
 angular.module('app')
 .controller ('feeCollectCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
+	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enableAutoCompleteForFeeCollect(),0);
 	$scope.resetDataFeeCollect1=function(){
 		$("#fcSchoolClassSection").val("");

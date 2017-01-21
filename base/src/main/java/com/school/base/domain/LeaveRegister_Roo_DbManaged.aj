@@ -7,6 +7,9 @@ import com.school.base.domain.LeaveRegister;
 import com.school.base.domain.LeaveStatus;
 import com.school.base.domain.LeaveType;
 import com.school.base.domain.SchoolSession;
+
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,9 +33,7 @@ privileged aspect LeaveRegister_Roo_DbManaged {
     @NotNull
     private Integer LeaveRegister.leaveWhomId;
     
-    @Column(name = "LEAVE_DATE")
-    @NotNull
-    private Integer LeaveRegister.leaveDate;
+   
     
     @Column(name = "LEAVE_REASON", length = 300)
     private String LeaveRegister.leaveReason;
@@ -67,14 +68,6 @@ privileged aspect LeaveRegister_Roo_DbManaged {
     
     public void LeaveRegister.setLeaveWhomId(Integer leaveWhomId) {
         this.leaveWhomId = leaveWhomId;
-    }
-    
-    public Integer LeaveRegister.getLeaveDate() {
-        return leaveDate;
-    }
-    
-    public void LeaveRegister.setLeaveDate(Integer leaveDate) {
-        this.leaveDate = leaveDate;
     }
     
     public String LeaveRegister.getLeaveReason() {
