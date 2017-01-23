@@ -1,9 +1,11 @@
 angular.module('app')
-.controller ('loginController', function($scope,$rootScope,$stateParams,$http,$filter,$state,$window) {
+.controller ('loginController', function($scope,$rootScope,$stateParams,$http,$filter,$state,$window,$timeout) {
 	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$('#userName').focus();
     $rootScope.urlappend="http://localhost:8555/admin/";
 	//$rootScope.urlappend="http://easybolt.in/admin/";
+    
+    $timeout(enableCalendar(),0)
 	
 	$rootScope.JSESSIONID="";
 	$rootScope.schoolName="";
@@ -80,7 +82,7 @@ angular.module('app')
                     $window.localStorage.setItem('schooolAddress', "");
                     $window.localStorage.setItem('schoolLogo', "");
                     $window.localStorage.setItem('urlappend', $rootScope.urlappend);
-                    
+                   
 	        		$state.go("dashboard",{});
 	        	}else{
 	        		alertify.error(data.message);
@@ -105,7 +107,7 @@ var JSESSIONID="";
 
 
 angular.module('app')
-.service('RefreshHandling', function($http, $state, $rootScope,$window){
+.service('RefreshHandling', function($http, $state, $rootScope,$window,$timeout){
 	$rootScope.validateSession=function(data){
 		if(data.error=="true"){
 			if(data.errorCode!=undefined){
@@ -130,11 +132,18 @@ angular.module('app')
 	       $("#quikNavigationDiv").show();
 	   }
 	  
-	   $('#fullDashBoard').attr('style', 'visibility: collapse;');
+	   $timeout(enableCalendar(),0)
 
 })
 
-
+function enableCalendar(){
+	
+	var dummydata=[{"title":"Test","allDay":true,"start":"2017-01-01T21:45:00.8461321+02:00","end":"2017-01-03T23:45:00.8461321+02:00","url":null,"id":1}];
+	 $('#calendar1').fullCalendar({
+         disableDragging: true,
+         events:dummydata
+     }); 
+}
 
 
 
