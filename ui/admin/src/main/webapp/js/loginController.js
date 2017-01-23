@@ -130,6 +130,7 @@ angular.module('app')
 	       $("#quikNavigationDiv").show();
 	   }
 	  
+	   $('#fullDashBoard').attr('style', 'visibility: collapse;');
 
 })
 

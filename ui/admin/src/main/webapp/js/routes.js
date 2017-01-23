@@ -255,6 +255,15 @@ angular.module("app",['ui.router'])
           }
     })
     
+    .state('regularAbsentees', {
+      url: '/regularAbsentees',
+      templateUrl: 'templates/regularAbsentees.html',
+      resolve: {
+          message: function(RefreshHandling){
+              return ""; }
+          }
+    })
+    
     
     
     

@@ -2,6 +2,36 @@ angular.module('app')
 .controller ('leaveRegisterCtrl', function($scope,$rootScope,$stateParams,$http,$filter,$state,$compile,$timeout) {
 	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$timeout(enableAutoCompleteLeaveRegister(),0);
+	
+	   $scope.findSchoolSessionsForAttendance=function(){
+			var serverPath="admin/schoolsetup/findSchoolSessions";
+			var input={};
+			$http({
+	           url: $rootScope.urlappend + serverPath+';jsessionid='+$rootScope.JSESSIONID,
+	           method: "POST",
+	           params:{"input":JSON.stringify(input)} 
+
+	       }).success(function (data, status, headers, config) {
+	       	$rootScope.validateSession(data);
+	       	if(data.error=="true"){
+	       		alertify.error(data.message);
+	       	}else{
+	       		$rootScope.schoolSessions=JSON.parse(data.result);
+	       	}
+	       	
+	       }).error(function (data, status, headers, config) {
+	       	
+	       });
+	   } ;
+	   
+	   $scope.resetNameDaatInLeaveRegister=function(){
+		   $("#oldLeavesOfThisStudent").empty();
+		   $("#studentNameForLeaveRegister").val('');
+		   
+	   }
+	   
+	   $scope.findSchoolSessionsForAttendance();
+	
  });
 
 function enableAutoCompleteLeaveRegister(){
@@ -60,7 +90,7 @@ function findFullLeaveDataAfterSelecting(studentId){
 	        data: {"input":JSON.stringify(input)} ,
 	        success: function(data) {
 	        	if(data.error=="false"){
-	        		var result=data.result;
+	        		var result=JSON.parse(data.result);
 	        		formTheLeaveRegisterGrid(result);
 	        		
 	        	}else{
@@ -85,9 +115,10 @@ function formTheLeaveRegisterGrid(result){
 							oldLeavesOfThisStudent+="     <thead>";
 							oldLeavesOfThisStudent+="       <tr>";
 							oldLeavesOfThisStudent+="         <th>Sl No</th>";
-							oldLeavesOfThisStudent+="         <th>Name</th>";
-							oldLeavesOfThisStudent+="         <th>Father Name</th>";
-							oldLeavesOfThisStudent+="         <th>Father Mobile</th>";
+							oldLeavesOfThisStudent+="         <th>From Date</th>";
+							oldLeavesOfThisStudent+="         <th>To Date</th>";
+							oldLeavesOfThisStudent+="         <th>Session</th>";
+							oldLeavesOfThisStudent+="         <th>Reason</th>";
 							oldLeavesOfThisStudent+="          <th>Delete</th>";
 							oldLeavesOfThisStudent+="       </tr>";
 							oldLeavesOfThisStudent+="     </thead>";
@@ -97,10 +128,13 @@ function formTheLeaveRegisterGrid(result){
 							slno+=1;
 							oldLeavesOfThisStudent+="<tr>";
 							oldLeavesOfThisStudent+="   <td>"+slno+"</td>";
-							oldLeavesOfThisStudent+="   <td>"+result.leaveDate+"</td>";
-							oldLeavesOfThisStudent+="   <td>"+result.schoolSessionId.sessionName+"</td>";
-							oldLeavesOfThisStudent+="   <td>"+result.leaveReason+"</td>";
-							oldLeavesOfThisStudent+="   <td><input type='button' value='Delete'   id="+result.leaveRegisterId+"  onclick='deleteStudentLeave("+result.leaveRegisterId+")'/></td>";
+							var fromleaveDate=new Date(result[int].fromLeaveDate);
+							var tolaeveDate=new Date (result[int].toLeaveDate);
+							oldLeavesOfThisStudent+="   <td>"+fromleaveDate.toDateString()+"</td>";
+							oldLeavesOfThisStudent+="   <td>"+tolaeveDate.toDateString()+"</td>";
+							oldLeavesOfThisStudent+="   <td>"+result[int].schoolSessionId.sessionName+"</td>";
+							oldLeavesOfThisStudent+="   <td>"+result[int].leaveReason+"</td>";
+							oldLeavesOfThisStudent+="   <td><input type='button' value='Delete'   id="+result[int].leaveRegisterId+"  onclick='deleteStudentLeave("+result[int].leaveRegisterId+")'/></td>";
 							oldLeavesOfThisStudent+=" </tr>";
 						
 						}
@@ -140,13 +174,13 @@ function deleteStudentLeave(leaveRegisterId){
 	    });
 }
 
-function saveStudentLeave(leaveRegisterId){
+function saveStudentLeave(){
 	if(studentIdForFetching==0||studentIdForFetching==undefined){
 		alertify.error("Please select student for savinf Leave");
 		return;
 	}
 	
-	if($("#schooSession").val()==""||$("#schooSession").val()==undefined){
+	if($("#schoolSession").val()==""||$("#schoolSession").val()==undefined){
 		alertify.error("Please select School Session");
 		return;
 	}
@@ -166,7 +200,7 @@ function saveStudentLeave(leaveRegisterId){
 		return;
 	}
 	
-	 var input={"studentId":studentIdForFetching,"schoolSessionId":$("#schooSession").val(),"leaveReason":$("#leaveReason").val(),
+	 var input={"studentId":studentIdForFetching,"schoolSessionId":$("#schoolSession").val(),"leaveReason":$("#leaveReason").val(),
 			 "fromDateForLeave":$("#fromDateForLeave").val(),"toDateForLeave":$("#toDateForLeave").val(),};
 	    $.ajax({
 	        dataType: "json",
