@@ -88,7 +88,7 @@ public class SchoolFee {
 		query.append(" JOIN student s");
 		query.append(" JOIN school_fee_type sft");
 		query.append(" JOIN school_class_section scs JOIN school_class scl");
-		query.append(" WHERE sf.STUDENT_ID=S.STUDENT_ID");
+		query.append(" WHERE sf.STUDENT_ID=s.STUDENT_ID");
 		query.append(" AND sft.SCHOOL_FEE_TYPE_ID=sf.SCHOOL_FEE_TYPE_ID");
 		query.append(" AND scs.SCHOOL_CLASS_SECTION_ID=s.SCHOOL_CLASS_SECTION_ID");
 		query.append(" AND scl.SCHOOL_CLASS_ID="+schoolClassId+"");

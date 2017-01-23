@@ -1,8 +1,8 @@
 angular.module('app')
-.controller ('loginController', function($scope,$rootScope,$stateParams,$http,$filter,$state) {
+.controller ('loginController', function($scope,$rootScope,$stateParams,$http,$filter,$state,$window) {
 	$('#fullDashBoard').attr('style', 'visibility: collapse;');
 	$('#userName').focus();
-	$rootScope.urlappend="http://localhost:8555/admin/";
+    $rootScope.urlappend="http://localhost:8555/admin/";
 	//$rootScope.urlappend="http://easybolt.in/admin/";
 	
 	$rootScope.JSESSIONID="";
@@ -75,6 +75,12 @@ angular.module('app')
                     $("#menuGrid").show();
                     $("#quikNavigationDiv").show();
                     $rootScope.fetchAcademicYear();
+                    $window.localStorage.setItem('JSESSIONID', data.JSESSIONID);
+                    $window.localStorage.setItem('schoolName', "");
+                    $window.localStorage.setItem('schooolAddress', "");
+                    $window.localStorage.setItem('schoolLogo', "");
+                    $window.localStorage.setItem('urlappend', $rootScope.urlappend);
+                    
 	        		$state.go("dashboard",{});
 	        	}else{
 	        		alertify.error(data.message);
@@ -95,3 +101,47 @@ angular.module('app')
 //var urlappend="http://easybolt.in/admin/";
 var urlappend="http://localhost:8555/admin/";
 var JSESSIONID="";
+
+
+
+angular.module('app')
+.service('RefreshHandling', function($http, $state, $rootScope,$window){
+	$rootScope.validateSession=function(data){
+		if(data.error=="true"){
+			if(data.errorCode!=undefined){
+				if(data.errorCode=="1"){
+					alertify.error("Sorry Your Has Expired.Please Log In Again!");
+					$state.go("login",{});
+				}
+			}
+		}
+	};
+	   $rootScope.JSESSIONID =  $window.localStorage.getItem('JSESSIONID');
+	   $rootScope.schoolName =  $window.localStorage.getItem('schoolName');
+	   $rootScope.schooolAddress = $window.localStorage.getItem('schooolAddress');
+	   $rootScope.schoolLogo = $window.localStorage.getItem('schoolLogo');
+	   $rootScope.urlappend=$window.localStorage.getItem('urlappend');
+	   urlappend=$rootScope.urlappend;
+	   JSESSIONID=$rootScope.JSESSIONID;
+	   var currentLocation = window.location;
+	   currentLocation=currentLocation.toString();
+	   if(!currentLocation.includes('login')){
+		   $("#menuGrid").show();
+	       $("#quikNavigationDiv").show();
+	   }
+	  
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
