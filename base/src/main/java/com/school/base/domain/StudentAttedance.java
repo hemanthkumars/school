@@ -14,6 +14,8 @@ import org.springframework.roo.addon.json.RooJson;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.school.base.util.GeneralConstants;
+
 @RooJavaBean
 @RooJpaActiveRecord(versionField = "", table = "student_attedance")
 @RooDbManaged(automaticallyDelete = true)
@@ -153,6 +155,28 @@ public class StudentAttedance {
 			 return entityManager().createNativeQuery("DELETE FROM student_attedance WHERE STUDENT_ATTENDANCE_ID IN "+studentAttendanceIds+"").executeUpdate();
 		}
 		return 0;
+	}
+	
+	public static List<Object[]> findRegularAbsentees(Integer schoolSessionId,Integer schoolAcademicYearId,Integer schoolId){
+		StringBuilder  query= new StringBuilder();
+		query.append(" SELECT COUNT(DISTINCT(sa.STUDENT_ATTENDANCE_ID)),s.FIRST_NAME,");
+		query.append(" scs.`CODE`,scs.SCHOOL_CLASS_SECTION_NAME,s.FATHER_MOBILE,s.FATHER_NAME");
+		query.append(" FROM student s");
+		query.append(" JOIN school_class_section scs");
+		query.append(" JOIN student_attedance sa ");
+		query.append(" JOIN attendance_status atst");
+		query.append(" WHERE sa.STUDENT_ID=s.STUDENT_ID");
+		query.append(" AND scs.SCHOOL_CLASS_SECTION_ID=s.SCHOOL_CLASS_SECTION_ID");
+		query.append(" AND atst.ATTENDANCE_STATUS_ID=sa.ATTENDANCE_STATUS_ID");
+		query.append(" AND atst.ATTENDANCE_STATUS_ID="+GeneralConstants.STUDENT_ATTENDANCE_STATUS_ABSENT+"");
+		query.append(" AND sa.SCHOOL_SESSION_ID="+schoolSessionId+"");
+		query.append(" AND sa.SCHOOL_ACADEMIC_YEAR_ID="+schoolAcademicYearId+"");
+		query.append(" AND s.SCHOOL_ID="+schoolId+"");
+		query.append(" GROUP BY sa.STUDENT_ID");
+		query.append(" ORDER BY COUNT(DISTINCT(sa.STUDENT_ATTENDANCE_ID)) DESC");
+
+		List<Object[]> result =entityManager().createNativeQuery(query.toString()).getResultList();
+		return result;
 	}
 	
 	

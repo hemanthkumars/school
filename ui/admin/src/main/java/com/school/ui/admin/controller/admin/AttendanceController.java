@@ -497,7 +497,7 @@ public class AttendanceController {
  		JSONObject output= new JSONObject();
  		String fromDateForLeave=input.getString("fromDateForLeave");
  		String toDateForLeave=input.getString("toDateForLeave");
- 		Integer schoolSessionId=input.getInt("schooSession");
+ 		Integer schoolSessionId=input.getInt("schoolSessionId");
  		String leaveReason=input.getString("leaveReason");
  		Integer studentId=input.getInt("studentId");
  		LeaveRegister leaveRegister= new LeaveRegister();
@@ -544,6 +544,24 @@ public class AttendanceController {
  			return output.toString();
      }
      
+     
+     @RequestMapping(value = "/findRegularAbsentees", method = RequestMethod.POST,produces = "application/json")
+  	 @ResponseBody
+  	 public String findRegularAbsentees(HttpServletRequest request,HttpServletResponse reresponse)  {
+  		JSONObject input= new JSONObject(request.getParameter("input"));
+  		JSONObject output= new JSONObject();
+  		Integer schoolSessionId =input.getInt("schoolSessionId");
+  		List<SchoolAcademic> schoolAcademics=SchoolAcademic.fetchCurrentSchoolAcademic(SessionManager.getUserContext(request).getSchoolId());
+		  if(schoolAcademics.isEmpty()){
+			  output.put("error", "true");
+				output.put("message", "Define active Academic Year");
+				return output.toString();
+		  }
+		  List<Object[]> result=StudentAttedance.findRegularAbsentees(schoolSessionId, schoolAcademics.get(0).getSchoolAcademicYearId(), SessionManager.getUserContext(request).getSchoolId());
+		  output.put("error", "false");
+	  		output.put("result", new JSONSerializer().serialize(result));
+	 			return output.toString();
+     }
      
 	
 }
